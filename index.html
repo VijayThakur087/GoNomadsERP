@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0f172a">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; frame-src 'self' blob: data:; connect-src 'self'; object-src 'none'; base-uri 'none'">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1595,6 +1596,11 @@ window.lucide=(function(){
         </div>
       </section>
 
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+          <div class="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-200 shadow-sm p-6"><h3 class="font-bold text-slate-900 text-base mb-4">Top Customers (Due)</h3><div class="overflow-x-auto"><table class="w-full text-left border-collapse text-xs"><thead><tr class="border-b border-slate-100 text-slate-400 uppercase tracking-wider"><th class="py-2 font-semibold">Client Name</th><th class="py-2 font-semibold text-right">Amount Due</th></tr></thead><tbody id="dash-ar-tbody" class="divide-y divide-slate-100"></tbody></table></div></div>
+          <div class="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-200 shadow-sm p-6"><h3 class="font-bold text-slate-900 text-base mb-4">Top Vendors (Due)</h3><div class="overflow-x-auto"><table class="w-full text-left border-collapse text-xs"><thead><tr class="border-b border-slate-100 text-slate-400 uppercase tracking-wider"><th class="py-2 font-semibold">Vendor Name</th><th class="py-2 font-semibold text-right">Amount Due</th></tr></thead><tbody id="dash-ap-tbody" class="divide-y divide-slate-100"></tbody></table></div></div>
+        </div>
+
       <!-- INVOICES -->
       <section id="tab-invoices" class="space-y-6 hidden">
         <h2 class="text-xl md:text-2xl font-bold text-slate-900 mb-6">Invoices & Bookings</h2>
@@ -1635,9 +1641,11 @@ window.lucide=(function(){
           <div class="bg-white/90 p-5 rounded-2xl border border-slate-200 shadow-sm"><p class="text-xs font-semibold text-slate-500 uppercase">Active Payable Entries</p><h3 id="ap-vendor-count" class="text-2xl font-bold text-purple-600 mt-2">0</h3></div>
         </div>
         <div><p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Payables ageing (by bill date)</p><div id="ap-ageing" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div></div>
-        <div class="bg-white/90 rounded-2xl border border-slate-200 shadow-sm overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-left border-collapse">
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          <div class="xl:col-span-1 bg-white/90 rounded-2xl border border-slate-200 shadow-sm overflow-hidden"><div class="p-4 border-b border-slate-100 font-bold text-slate-900 text-sm">Vendor-wise outstanding</div><table class="w-full text-left border-collapse text-xs"><thead><tr class="bg-slate-50 text-slate-500 uppercase font-semibold"><th class="p-3">Vendor</th><th class="p-3 text-center">Bills</th><th class="p-3 text-right">Due</th></tr></thead><tbody id="ap-vendors-tbody" class="divide-y divide-slate-100"></tbody></table></div>
+          <div class="xl:col-span-2 bg-white/90 rounded-2xl border border-slate-200 shadow-sm overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-left border-collapse">
           <thead><tr class="bg-slate-50 border-b border-slate-200 text-slate-500 text-xs uppercase tracking-wider font-semibold"><th class="p-4">Vendor / DMC Name</th><th class="p-4">Service Type</th><th class="p-4">Tour / Booking Ref</th><th class="p-4">Bill Date</th><th class="p-4 text-right">Bill Amount (₹)</th><th class="p-4 text-right">Paid Amount (₹)</th><th class="p-4 text-right">Balance Due (₹)</th><th class="p-4 text-center">Status</th><th class="p-4 text-center">Action</th></tr></thead>
-          <tbody id="payables-tbody" class="text-sm divide-y divide-slate-100"></tbody></table></div></div>
+          <tbody id="payables-tbody" class="text-sm divide-y divide-slate-100"></tbody></table></div></div></div>
       </section>
 
       <!-- MASTERS -->
@@ -1971,7 +1979,8 @@ window.lucide=(function(){
         <div><label class="block font-semibold text-slate-700 mb-1">Date</label><input type="date" id="l-date" required class="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-travel-500"></div>
         <div><label class="block font-semibold text-slate-700 mb-1">Amount (₹)</label><input type="number" id="l-amount" required min="0.01" step="0.01" class="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-travel-500"></div>
       </div>
-      <div><label class="block font-semibold text-slate-700 mb-1">Head</label><select id="l-head" class="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-travel-500"></select></div>
+      <div><label class="block font-semibold text-slate-700 mb-1">Head</label><select id="l-head" onchange="gnLedgerToggle()" class="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-travel-500"></select></div>
+      <div id="l-head-other-wrap" class="hidden"><label class="block font-semibold text-slate-700 mb-1">Specify Other Head</label><input type="text" id="l-head-other" placeholder="e.g. Courier charges" class="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-travel-500"></div>
       <div><label class="block font-semibold text-slate-700 mb-1">Description</label><input type="text" id="l-desc" placeholder="Optional" class="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-travel-500"></div>
       <p class="text-[11px] text-slate-500">Expenses and income are treated as paid / received in cash or bank on the entry date. Tour costs go in Tour Costing, not here.</p>
       <div class="flex justify-end space-x-3 pt-4 border-t"><button type="button" onclick="closeModal('ledger-modal')" class="px-4 py-2 border rounded-xl font-medium text-slate-600">Cancel</button><button type="submit" class="px-5 py-2 bg-travel-600 hover:bg-travel-700 text-white rounded-xl font-semibold">Save Entry</button></div>
@@ -1999,7 +2008,7 @@ const LOGO_SRC = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwM
 
 /* ---------- CONSTANTS & HELPERS ---------- */
 const OWN_STATE = '19';
-const GSTIN_RE = /^\d{2}[A-Z]{5}\d{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/;
+const GSTIN_RE = { test: g => /^\d{2}[A-Z]{5}\d{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/.test(g) && gstinChk(g) };
 const GST_RATES = [0, 3, 5, 12, 18, 28];          // default is 5
 const COST_CATS = ['Hotel', 'Railfare', 'Airfare', 'Fooding', 'Entertainment', 'Others'];
 const LEDGER_HEADS = [
@@ -2008,14 +2017,15 @@ const LEDGER_HEADS = [
   { h: 'Rent', g: 'oth' }, { h: 'Electricity & water', g: 'oth' }, { h: 'Telephone & internet', g: 'oth' },
   { h: 'Office expenses', g: 'oth' }, { h: 'Advertisement & marketing', g: 'oth' }, { h: 'Professional & legal fees', g: 'oth' },
   { h: 'Travelling & conveyance', g: 'oth' }, { h: 'Insurance', g: 'oth' }, { h: 'Repairs & maintenance', g: 'oth' },
-  { h: 'Software & subscriptions', g: 'oth' }, { h: 'Miscellaneous expenses', g: 'oth' },
-  { h: 'Interest income', g: 'inc' }, { h: 'Commission received', g: 'inc' }, { h: 'Other income', g: 'inc' }
+  { h: 'Software & subscriptions', g: 'oth' }, { h: 'Miscellaneous expenses', g: 'oth' }, { h: 'Other expense (Please specify)', g: 'oth' },
+  { h: 'Interest income', g: 'inc' }, { h: 'Commission received', g: 'inc' }, { h: 'Other income (Please specify)', g: 'inc' }
 ];
 const GROUP_LABEL = { emp: 'Employee benefits expense', fin: 'Finance costs', oth: 'Other expenses', inc: 'Other income' };
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const r2 = n => Math.round((n + Number.EPSILON) * 100) / 100;
-const sum = (arr, f) => r2(arr.reduce((a, x) => a + (f ? f(x) : x), 0));
+const cents = n => Math.round((Number(n) || 0) * 100);
+const r2 = n => cents(n) / 100;
+const sum = (arr, f) => r2(arr.reduce((a, x) => a + cents(f ? f(x) : x), 0) / 100);
 const $ = id => document.getElementById(id);
 function formatINR(n) { return '₹' + (Number(n) || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
 function todayStr() { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); }
@@ -2175,7 +2185,7 @@ function gstSummary(period) {
     if (inv.type === 'B2B') s.b2b.push({ inv, t }); else s.b2cCount++;
   });
   const rate = Number(appState.settings.itcRate) || 0;
-  s.itc = r2(appState.payables.filter(p => inPeriod(p.date)).reduce((a, p) => a + (p.gstAmt !== undefined ? (p.itcOk ? p.gstAmt : 0) : p.bill * rate / 100), 0));
+  s.itc = r2(appState.payables.filter(p => !p.deleted && inPeriod(p.date)).reduce((a, p) => a + (p.gstAmt !== undefined ? (p.itcOk ? p.gstAmt : 0) : p.bill * rate / 100), 0));
   ['taxable', 'tax', 'igst', 'cgst', 'sgst'].forEach(k => s[k] = r2(s[k]));
   s.net = Math.max(0, r2(s.tax - s.itc));
   return s;
@@ -2185,7 +2195,7 @@ function gstSummary(period) {
 function updateDatalists() {
   $('dl-customers').innerHTML = appState.customers.map(c => `<option value="${esc(c.name)}">`).join('');
   $('dl-vendors').innerHTML = appState.vendors.map(v => `<option value="${esc(v.name)}">`).join('');
-  $('dl-tours').innerHTML = appState.costings.map(c => `<option value="${esc(c.name)}">`).join('');
+  $('dl-tours').innerHTML = appState.costings.filter(c => !c.deleted).map(c => `<option value="${esc(c.name)}">`).join('');
 }
 function autoFillCustomer() {
   const m = appState.customers.find(c => c.name === $('inv-client-name').value); if (!m) return;
@@ -2228,7 +2238,9 @@ function saveMaster(e) {
   const type = $('master-type').value, id = $('master-id').value, cust = type === 'customer', list = cust ? appState.customers : appState.vendors;
   const v = i => $(i).value.trim();
   const d = { name: v('m-name'), contactPerson: v('m-person'), contact: v('m-contact'), email: v('m-email').toLowerCase(), gstin: v('m-gstin').toUpperCase(), pan: v('m-pan').toUpperCase(), addr: v('m-addr'), state: $('m-state').value, notes: v('m-notes') };
-  if (!d.name) { showToast('Name needed', 'Please enter the name.'); return; }
+  if (!d.name || !/^[\p{L}\p{N}\s.,&'()\/@_+:#-]+$/u.test(d.name)) { showToast('Invalid Name', 'Name is required and must contain valid characters.'); return; }
+  if (d.contact) { const ph = gnPhone(d.contact); if (!ph.ok) { showToast('Invalid Contact', ph.msg); return; } d.contact = ph.norm; }
+  if (!d.state && (!d.gstin || gnStateName(d.gstin.slice(0, 2)))) { showToast('State Required', 'Please select a state.'); return; }
   if (list.some(x => String(x.id) !== String(id) && String(x.name || '').trim().toLowerCase() === d.name.toLowerCase())) { showToast('Duplicate', 'A profile with this name already exists.'); return; }
   if (d.gstin && !GSTIN_RE.test(d.gstin)) { showToast('Invalid GSTIN', 'Please check the 15-character GSTIN.'); return; }
   if (d.gstin) {
@@ -2301,8 +2313,10 @@ function switchTab(tabId) {
 /* ---------- DASHBOARD ---------- */
 function refreshDashboard() {
   const rev = sum(appState.invoices, i => invTotals(i).sub), recv = sum(appState.invoices, invDue);
-  const payables = sum(appState.payables, payDue);
-  const cRev = sum(appState.costings, costRevenue), profit = r2(cRev - sum(appState.costings, costTotal));
+  const activePayables = appState.payables.filter(p => !p.deleted);
+  const payables = sum(activePayables, payDue);
+  const activeCostings = appState.costings.filter(c => !c.deleted);
+  const cRev = sum(activeCostings, costRevenue), profit = r2(cRev - sum(activeCostings, costTotal));
   $('kpi-revenue').innerText = formatINR(rev);
   $('kpi-receivables').innerText = formatINR(recv);
   $('kpi-payables').innerText = formatINR(payables);
@@ -2313,10 +2327,17 @@ function refreshDashboard() {
     <tr class="hover:bg-slate-50/50"><td class="py-2.5 font-mono font-semibold text-slate-800">${esc(inv.number)}</td><td class="py-2.5 font-medium text-slate-700">${esc(inv.clientName)}</td>
     <td class="py-2.5 text-slate-600 truncate max-w-[200px]">${esc(inv.tourName)}</td><td class="py-2.5 font-bold text-slate-900 text-right">${formatINR(invTotals(inv).gross)}</td></tr>`).join('');
   updateCounts();
+  const openAR = appState.invoices.filter(i => !i.cancelled).map(i => ({ name: i.clientName, due: invDue(i) })).filter(x => x.due > 0.004);
+  const byCustDash = {}; openAR.forEach(x => { byCustDash[x.name] = r2((byCustDash[x.name] || 0) + x.due); });
+  $('dash-ar-tbody').innerHTML = Object.keys(byCustDash).map(k => ({name: k, due: byCustDash[k]})).sort((a,b)=>b.due-a.due).slice(0,5).map(x => `<tr><td class="py-2.5 font-medium text-slate-700">${esc(x.name)}</td><td class="py-2.5 font-bold text-rose-600 text-right">${formatINR(x.due)}</td></tr>`).join('') || `<tr><td colspan="2" class="py-4 text-center text-slate-400">No pending dues</td></tr>`;
+  
+  const openAPDash = appState.payables.filter(p => !p.deleted).map(p => ({ name: p.vendor, due: payDue(p) })).filter(x => x.due > 0.004);
+  const byVendDash = {}; openAPDash.forEach(x => { byVendDash[x.name] = r2((byVendDash[x.name] || 0) + x.due); });
+  $('dash-ap-tbody').innerHTML = Object.keys(byVendDash).map(k => ({name: k, due: byVendDash[k]})).sort((a,b)=>b.due-a.due).slice(0,5).map(x => `<tr><td class="py-2.5 font-medium text-slate-700">${esc(x.name)}</td><td class="py-2.5 font-bold text-rose-600 text-right">${formatINR(x.due)}</td></tr>`).join('') || `<tr><td colspan="2" class="py-4 text-center text-slate-400">No pending payables</td></tr>`;
   const lb = appState.settings.lastBackup, age = lb ? daysSince(lb) : null, b = $('backup-banner');
-  if (age === null || age > 7) {
+  if (age === null || age >= 1) {
     b.classList.remove('hidden');
-    b.innerHTML = `<div><p class="font-semibold">Backup reminder</p><p class="text-xs mt-0.5">Your data is stored only in this browser. ${age === null ? 'You have never exported a backup.' : `Last backup was ${age} days ago.`}</p></div>
+    b.innerHTML = `<div><p class="font-semibold text-rose-700">Critical Backup Required</p><p class="text-xs mt-0.5">Your financial data is stored only in this browser and can be wiped by OS updates. ${age === null ? 'You have never exported a backup.' : `Last backup was ${age} days ago.`}</p></div>
       <button onclick="exportBackup()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold px-3 py-2 rounded-lg whitespace-nowrap">Download backup now</button>`;
   } else b.classList.add('hidden');
 }
@@ -2330,7 +2351,7 @@ function renderInvoicesTable() {
   $('invoices-tbody').innerHTML = rows.map(inv => {
     const t = invTotals(inv), due = invDue(inv), st = invStatus(inv);
     const badge = st === 'Paid' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : st === 'Partial' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-rose-50 text-rose-700 border-rose-200';
-    const hasCost = appState.costings.some(c => c.invoiceId === inv.id);
+    const hasCost = appState.costings.some(c => !c.deleted && c.invoiceId === inv.id);
     return `<tr class="hover:bg-slate-50/50">
       <td class="p-4 font-mono font-bold text-slate-900">${esc(inv.number)}</td><td class="p-4 text-slate-600">${esc(inv.date)}</td>
       <td class="p-4"><p class="font-semibold text-slate-900">${esc(inv.clientName)}</p><p class="text-xs text-slate-500">${esc(inv.clientContact)}</p></td>
@@ -2416,7 +2437,7 @@ function saveInvoice(e) {
 }
 function deleteInvoice(id) { showToast('Not allowed','Issued invoices cannot be deleted (GST serial-number rule). Use Cancel, or issue a Credit Note.'); return; }
 function _oldDeleteInvoice(id) {
-  const linked = appState.costings.filter(c => c.invoiceId === id).length;
+  const linked = appState.costings.filter(c => !c.deleted && c.invoiceId === id).length;
   if (!confirm(`Delete this invoice?${linked ? `\n${linked} linked cost sheet(s) will become unlinked (revenue will be set to the invoice value at deletion).` : ''}`)) return;
   const inv = appState.invoices.find(i => i.id === id);
   appState.costings.forEach(c => { if (c.invoiceId === id) { c.revenue = costRevenue(c); c.date = inv.date; c.invoiceId = ''; } });
@@ -2451,8 +2472,9 @@ function openPrintModal(id) {
 
 /* ---------- TOUR COSTING (linked to invoices) ---------- */
 function renderCostingTable() {
-  const tRev = sum(appState.costings, costRevenue), tCost = sum(appState.costings, costTotal), tProfit = r2(tRev - tCost);
-  $('costing-tbody').innerHTML = appState.costings.map(c => {
+  const activeCostings = appState.costings.filter(c => !c.deleted);
+  const tRev = sum(activeCostings, costRevenue), tCost = sum(activeCostings, costTotal), tProfit = r2(tRev - tCost);
+  $('costing-tbody').innerHTML = activeCostings.map(c => {
     const rev = costRevenue(c), cost = costTotal(c), profit = r2(rev - cost), margin = rev > 0 ? ((profit / rev) * 100).toFixed(1) : 0;
     const inv = linkedInvoice(c), cats = costByCat(c);
     const chips = Object.keys(cats).map(k => `<span class="inline-block mr-1 mb-1 px-1.5 py-0.5 bg-slate-100 text-slate-700 rounded text-[10px]">${esc(k)}: ${formatINR(cats[k])}</span>`).join('');
@@ -2470,14 +2492,14 @@ function renderCostingTable() {
   $('costing-tot-profit').innerText = formatINR(tProfit);
   $('costing-tot-margin-badge').innerText = `${tRev > 0 ? ((tProfit / tRev) * 100).toFixed(1) : 0}%`;
   const totals = {}; COST_CATS.forEach(k => totals[k] = 0);
-  appState.costings.forEach(c => (c.lines || []).forEach(l => totals[l.cat] = r2((totals[l.cat] || 0) + l.amount)));
+  activeCostings.forEach(c => (c.lines || []).forEach(l => totals[l.cat] = r2((totals[l.cat] || 0) + l.amount)));
   $('costing-cat-summary').innerHTML = COST_CATS.map(k => `<div class="bg-white/90 p-4 rounded-2xl border border-slate-200 shadow-sm"><p class="text-xs font-semibold text-slate-500 uppercase">${k}</p><h3 class="text-lg font-bold text-slate-900 mt-1">${formatINR(totals[k])}</h3></div>`).join('');
   lucide.createIcons();
 }
 function openNewCostingModal(invoiceId) {
   $('costing-form').reset(); $('c-pax').value = 2; $('c-date').value = todayStr();
   $('c-invoice').innerHTML = `<option value="">— Not linked (enter revenue manually) —</option>` +
-    appState.invoices.map(i => `<option value="${esc(i.id)}">${esc(i.number)} · ${esc(i.tourName)} · ${esc(i.clientName)}${appState.costings.some(c => c.invoiceId === i.id) ? ' (has cost sheet)' : ''}</option>`).join('');
+    appState.invoices.map(i => `<option value="${esc(i.id)}">${esc(i.number)} · ${esc(i.tourName)} · ${esc(i.clientName)}${appState.costings.some(c => !c.deleted && c.invoiceId === i.id) ? ' (has cost sheet)' : ''}</option>`).join('');
   $('cost-lines-tbody').innerHTML = ''; addCostLine('Hotel');
   if (invoiceId && appState.invoices.some(i => i.id === invoiceId)) $('c-invoice').value = invoiceId;
   onCostInvoiceChange(); openModal('costing-modal');
@@ -2524,7 +2546,7 @@ function saveCosting(e) {
 }
 function deleteCosting(id) {
   if (!confirm("Delete this cost sheet?")) return;
-  appState.costings = appState.costings.filter(c => c.id !== id); persistData(); renderCostingTable();
+  const c = appState.costings.find(x => x.id === id); if (c) { c.deleted = Date.now(); persistData(); renderCostingTable(); }
 }
 
 /* ---------- AGEING HELPERS ---------- */
@@ -2556,16 +2578,20 @@ function renderReceivables() {
 
 /* ---------- ACCOUNTS PAYABLE ---------- */
 function renderPayablesTable() {
-  const due = sum(appState.payables, payDue), paid = sum(appState.payables, payPaid);
-  $('payables-tbody').innerHTML = [...appState.payables].reverse().slice(0, 300).map(p => {
+  const activePayables = appState.payables.filter(p => !p.deleted);
+  const due = sum(activePayables, payDue), paid = sum(activePayables, payPaid);
+  $('payables-tbody').innerHTML = [...activePayables].reverse().slice(0, 300).map(p => {
     const d = payDue(p), badge = d <= 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700';
     return `<tr class="hover:bg-slate-50/50"><td class="p-4 font-bold text-slate-900">${esc(p.vendor)}</td><td class="p-4 text-slate-600">${esc(p.service)}</td><td class="p-4 font-mono text-slate-700">${esc(p.ref)}</td><td class="p-4 text-slate-600">${esc(p.date) || '-'}</td>
       <td class="p-4 text-right font-bold">${formatINR(p.bill)}</td><td class="p-4 text-right font-bold text-emerald-600">${formatINR(payPaid(p))}</td><td class="p-4 text-right font-bold text-rose-600">${formatINR(d)}</td>
       <td class="p-4 text-center"><span class="px-2.5 py-1 rounded-full text-xs font-bold ${badge}">${d <= 0 ? 'Settled' : 'Pending'}</span></td>
       <td class="p-4 text-center"><div class="flex items-center justify-center space-x-2">${d > 0 ? `<button onclick="openPayModal('AP','${esc(p.id)}')" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold rounded-lg">Pay</button>` : ''}${delBtn(`deletePayable('${esc(p.id)}')`)}</div></td></tr>`;
   }).join('') || `<tr><td colspan="9" class="p-8 text-center text-slate-400 text-sm">No vendor bills yet.</td></tr>`;
-  $('ap-total-due').innerText = formatINR(due); $('ap-total-paid').innerText = formatINR(paid); $('ap-vendor-count').innerText = appState.payables.length;
-  $('ap-ageing').innerHTML = ageingHtml(appState.payables.filter(p => payDue(p) > 0.004).map(p => ({ date: p.date || todayStr(), amount: payDue(p) })));
+  $('ap-total-due').innerText = formatINR(due); $('ap-total-paid').innerText = formatINR(paid); $('ap-vendor-count').innerText = activePayables.length;
+  $('ap-ageing').innerHTML = ageingHtml(activePayables.filter(p => payDue(p) > 0.004).map(p => ({ date: p.date || todayStr(), amount: payDue(p) })));
+  const openP = activePayables.filter(p => payDue(p) > 0.004);
+  const byVend = {}; openP.forEach(p => { byVend[p.vendor] = byVend[p.vendor] || { n: 0, due: 0 }; byVend[p.vendor].n++; byVend[p.vendor].due = r2(byVend[p.vendor].due + payDue(p)); });
+  $('ap-vendors-tbody').innerHTML = Object.keys(byVend).sort((a, b) => byVend[b].due - byVend[a].due).slice(0, 200).map(k => `<tr><td class="p-3 font-semibold text-slate-800">${esc(k)}</td><td class="p-3 text-center">${byVend[k].n}</td><td class="p-3 text-right font-bold text-rose-600">${formatINR(byVend[k].due)}</td></tr>`).join('') || `<tr><td colspan="3" class="p-6 text-center text-slate-400">No outstanding payables 🎉</td></tr>`;
   lucide.createIcons();
 }
 function openNewVendorPayableModal() { $('vendor-payable-form').reset(); gnSvcToggle('v-service', 'v-service-other'); $('v-date').value = todayStr(); $('v-paid').value = 0; openModal('vendor-payable-modal'); }
@@ -2581,12 +2607,12 @@ function savePayable(e) {
 }
 function deletePayable(id) {
   if (!confirm("Delete this payable?")) return;
-  appState.payables = appState.payables.filter(p => p.id !== id); persistData(); renderPayablesTable();
+  const p = appState.payables.find(x => x.id === id); if (p) { p.deleted = Date.now(); persistData(); renderPayablesTable(); }
 }
 
 /* ---------- RECEIPT / PAYMENT RECORDING ---------- */
 function openPayModal(kind, id) {
-  const ar = kind === 'AR', obj = ar ? appState.invoices.find(i => i.id === id) : appState.payables.find(p => p.id === id); if (!obj) return;
+  const ar = kind === 'AR', obj = ar ? appState.invoices.find(i => i.id === id) : appState.payables.find(p => p.id === id && !p.deleted); if (!obj) return;
   const due = ar ? invDue(obj) : payDue(obj);
   $('pay-form').reset(); $('pay-kind').value = kind; $('pay-id').value = id;
   $('pay-title').innerText = ar ? 'Record Receipt from Client' : 'Record Payment to Vendor';
@@ -2598,7 +2624,7 @@ function openPayModal(kind, id) {
 function savePayment(e) {
   e.preventDefault();
   const kind = $('pay-kind').value, id = $('pay-id').value, amount = parseFloat($('pay-amount').value) || 0, date = $('pay-date').value;
-  const obj = kind === 'AR' ? appState.invoices.find(i => i.id === id) : appState.payables.find(p => p.id === id);
+  const obj = kind === 'AR' ? appState.invoices.find(i => i.id === id) : appState.payables.find(p => p.id === id && !p.deleted);
   const due = kind === 'AR' ? invDue(obj) : payDue(obj);
   if (amount <= 0 || amount > due + 0.004) { showToast("Check amount", `Amount must be between 0 and ${formatINR(due)}.`); return; }
   const arr = kind === 'AR' ? (obj.receipts = obj.receipts || []) : (obj.payments = obj.payments || []);
@@ -2618,7 +2644,7 @@ function switchGstrSubTab(sub) {
 }
 function populatePeriods() {
   const sel = $('gstr-period'), prev = sel.value, set = new Set([todayStr().slice(0, 7)]);
-  appState.invoices.forEach(i => i.date && set.add(i.date.slice(0, 7))); appState.payables.forEach(p => p.date && set.add(p.date.slice(0, 7)));
+  appState.invoices.forEach(i => i.date && set.add(i.date.slice(0, 7))); appState.payables.filter(p => !p.deleted).forEach(p => p.date && set.add(p.date.slice(0, 7)));
   const months = [...set].sort().reverse();
   const label = m => new Date(m + '-01T00:00:00').toLocaleString('en-IN', { month: 'long', year: 'numeric' });
   sel.innerHTML = months.map(m => `<option value="${m}">${label(m)}</option>`).join('') + '<option value="ALL">All periods</option>';
@@ -2691,13 +2717,13 @@ function fsCompute(fy) {
   const R = sum(invs, i => invTotals(i).sub), G = sum(invs, i => invTotals(i).tax), Gr = sum(invs, i => invTotals(i).gross);
   const Rcpt = sum(appState.invoices.flatMap(i => i.receipts || []).filter(r => inFY(r.date)), r => r.amount);
   const cat = {}; let C = 0;
-  appState.costings.filter(c => inFY(costDate(c))).forEach(c => (c.lines || []).forEach(l => { cat[l.cat] = r2((cat[l.cat] || 0) + l.amount); C += l.amount; }));
+  appState.costings.filter(c => !c.deleted && inFY(costDate(c))).forEach(c => (c.lines || []).forEach(l => { cat[l.cat] = r2((cat[l.cat] || 0) + l.amount); C += l.amount; }));
   C = r2(C);
-  const B = sum(appState.payables.filter(p => inFY(p.date)), p => p.bill);
-  const Pm = sum(appState.payables.flatMap(p => p.payments || []).filter(x => inFY(x.date)), x => x.amount);
+  const B = sum(appState.payables.filter(p => !p.deleted && inFY(p.date)), p => p.bill);
+  const Pm = sum(appState.payables.filter(p => !p.deleted).flatMap(p => p.payments || []).filter(x => inFY(x.date)), x => x.amount);
   const D = Math.max(C, B), extra = r2(D - C); if (extra > 0) cat['Vendor bills not covered by cost sheets'] = extra;
   const lg = { emp: {}, fin: {}, oth: {}, inc: {} };
-  appState.ledger.filter(l => inFY(l.date)).forEach(l => { const h = LEDGER_HEADS.find(x => x.h === l.head); if (h) lg[h.g][l.head] = r2((lg[h.g][l.head] || 0) + l.amount); });
+  appState.ledger.filter(l => !l.deleted && inFY(l.date)).forEach(l => { const g = l.group || LEDGER_HEADS.find(x => x.h === l.head)?.g || 'oth'; lg[g][l.head] = r2((lg[g][l.head] || 0) + l.amount); });
   const tot = o => sum(Object.values(o));
   const OI = tot(lg.inc), emp = tot(lg.emp), fin = tot(lg.fin), oth = tot(lg.oth), opex = r2(emp + fin + oth);
   const dep = f.depreciation, totalExp = r2(D + emp + fin + dep + oth);
@@ -2786,8 +2812,8 @@ function renderFinancials(rebuild) {
   const sel = $('fs-fy');
   if (rebuild) {
     const set = new Set([fyOf(todayStr())]);
-    [...appState.invoices, ...appState.payables, ...appState.ledger].forEach(x => x.date && set.add(fyOf(x.date)));
-    appState.costings.forEach(c => costDate(c) && set.add(fyOf(costDate(c)))); Object.keys(appState.fin).forEach(k => set.add(+k));
+    [...appState.invoices, ...appState.payables.filter(p=>!p.deleted), ...appState.ledger.filter(l=>!l.deleted)].forEach(x => x.date && set.add(fyOf(x.date)));
+    appState.costings.filter(c=>!c.deleted).forEach(c => costDate(c) && set.add(fyOf(costDate(c)))); Object.keys(appState.fin).forEach(k => set.add(+k));
     const prev = sel.value, yrs = [...set].sort((a, b) => b - a);
     sel.innerHTML = yrs.map(y => `<option value="${y}">FY ${fyLabel(y)}</option>`).join('');
     sel.value = yrs.includes(+prev) ? prev : yrs[0];
@@ -2801,25 +2827,29 @@ function renderStatements() {
   const fy = +$('fs-fy').value, h = statementHtml(fy), c = fsCompute(fy);
   $('fs-pl').innerHTML = h.pl; $('fs-bs').innerHTML = h.bs;
   $('fin-opening-capital').innerHTML = `Opening capital (derived = assets − liabilities): <b>${formatINR(c.oCap)}</b>`;
-  const [s, e] = fyRange(fy), rows = appState.ledger.filter(l => l.date >= s && l.date <= e).sort((a, b) => b.date.localeCompare(a.date));
+  const [s, e] = fyRange(fy), rows = appState.ledger.filter(l => !l.deleted && l.date >= s && l.date <= e).sort((a, b) => b.date.localeCompare(a.date));
   $('fin-ledger-tbody').innerHTML = rows.map(l => {
-    const g = LEDGER_HEADS.find(x => x.h === l.head)?.g || 'oth';
+    const g = l.group || LEDGER_HEADS.find(x => x.h === l.head)?.g || 'oth';
     return `<tr><td class="p-3">${esc(l.date)}</td><td class="p-3 font-semibold">${esc(l.head)}</td><td class="p-3 text-slate-500">${GROUP_LABEL[g]}</td><td class="p-3 text-slate-600">${esc(l.desc)}</td><td class="p-3 text-right font-bold ${g === 'inc' ? 'text-emerald-600' : 'text-rose-600'}">${formatINR(l.amount)}</td><td class="p-3 text-center">${delBtn(`deleteLedger('${esc(l.id)}')`)}</td></tr>`;
   }).join('') || `<tr><td colspan="6" class="p-6 text-center text-slate-400">No expense / income entries for this year yet.</td></tr>`;
   lucide.createIcons();
 }
+function gnLedgerToggle() { const isOther = $('l-head').value.includes('(Please specify)'); $('l-head-other-wrap').classList.toggle('hidden', !isOther); $('l-head-other').required = isOther; }
 function openLedgerModal() {
   $('ledger-form').reset(); $('l-date').value = todayStr();
   const grp = g => `<optgroup label="${GROUP_LABEL[g]}">${LEDGER_HEADS.filter(h => h.g === g).map(h => `<option>${esc(h.h)}</option>`).join('')}</optgroup>`;
   $('l-head').innerHTML = grp('emp') + grp('fin') + grp('oth') + grp('inc');
+  gnLedgerToggle();
   openModal('ledger-modal');
 }
 function saveLedger(e) {
   e.preventDefault();
-  appState.ledger.push({ id: 'l-' + Date.now(), date: $('l-date').value, head: $('l-head').value, desc: $('l-desc').value.trim(), amount: parseFloat($('l-amount').value) || 0 });
+  let hVal = $('l-head').value, g = LEDGER_HEADS.find(x => x.h === hVal)?.g || 'oth', hd = hVal;
+  if (hVal.includes('(Please specify)')) { hd = $('l-head-other').value.trim(); if (!hd) { showToast('Specify Head', 'Please specify the other head.'); return; } }
+  appState.ledger.push({ id: 'l-' + Date.now(), date: $('l-date').value, head: hd, group: g, desc: $('l-desc').value.trim(), amount: parseFloat($('l-amount').value) || 0 });
   persistData(); closeModal('ledger-modal'); renderStatements();
 }
-function deleteLedger(id) { if (!confirm("Delete this entry?")) return; appState.ledger = appState.ledger.filter(l => l.id !== id); persistData(); renderStatements(); }
+function deleteLedger(id) { if (!confirm("Delete this entry?")) return; const l = appState.ledger.find(x => x.id === id); if (l) { l.deleted = Date.now(); persistData(); renderStatements(); } }
 function openReportModal() {
   const fy = +$('fs-fy').value, h = statementHtml(fy), partner = appState.settings.entity === 'partner';
   $('r-title').innerText = `Financial Statements – FY ${fyLabel(fy)}`;
@@ -2871,14 +2901,14 @@ function openEditInvoice(id) {
   $('inv-number').value = inv.number; $('inv-date').value = inv.date; $('inv-type').value = inv.type; toggleB2bFields();
   $('inv-client-name').value = inv.clientName; $('inv-client-contact').value = inv.clientContact || ''; $('inv-client-gstin').value = inv.clientGstin || '';
   $('inv-tour-name').value = inv.tourName || ''; $('inv-pos').value = inv.pos || ''; $('inv-client-addr').value = inv.clientAddr || ''; $('inv-tcs').value = String(inv.tcsRate || 0);
-  $('inv-status').value = 'Unpaid'; $('inv-status').disabled = true; toggleReceived();
+  const st = invStatus(inv); $('inv-status').value = st; $('inv-status').disabled = false; $('inv-received').value = invReceived(inv); toggleReceived();
   $('invoice-items-tbody').innerHTML = '';
   inv.items.forEach(it => { addInvoiceItemRow(); const tr = $('invoice-items-tbody').lastElementChild;
     tr.querySelector('.item-desc').value = it.desc; tr.querySelector('.item-hsn').value = it.hsn; tr.querySelector('.item-amount').value = it.amount;
     const sel = tr.querySelector('.item-gst');
     if (GST_RATES.includes(it.gstRate)) sel.value = it.gstRate; else { sel.value = 'custom'; const c = tr.querySelector('.item-gst-custom'); c.classList.remove('hidden'); c.value = it.gstRate; } });
   calculateModalTotals();
-  showToast('Editing', 'Payment status is managed in Accounts Receivable.');
+  showToast('Editing', 'You can now edit all fields including status.');
 }
 saveInvoice = function (e) {
   e.preventDefault();
@@ -2892,7 +2922,15 @@ saveInvoice = function (e) {
   if (!cu) appState.customers.unshift({ id: Date.now() + 1, name: clientName, contact, gstin, addr }); else if (addr) cu.addr = addr;
   const data = { number, date, type, clientName, clientContact: contact, clientGstin: gstin, tourName: $('inv-tour-name').value.trim(), clientAddr: addr, pos: $('inv-pos').value || suggestPoS(type, gstin, addr), tcsRate: parseFloat($('inv-tcs').value) || 0, items };
   if (creditRef) { data.items = items.map(i => Object.assign({}, i, { amount: -i.amount })); data.isCN = true; data.refId = creditRef.id; data.refNumber = creditRef.number; }
-  if (editingInvId) { Object.assign(appState.invoices.find(i => i.id === editingInvId), data); }
+  if (editingInvId) { 
+    const inv = appState.invoices.find(i => i.id === editingInvId); 
+    Object.assign(inv, data); 
+    const t0 = invTotals(inv), gross = r2(t0.gross + t0.tcs), status = $('inv-status').value;
+    inv.receipts = inv.receipts || []; const got = sum(inv.receipts, r => r.amount);
+    if (status === 'Paid' && gross - got > 0.004) inv.receipts.push({ date: todayStr(), amount: r2(gross - got), ref: 'Set via invoice edit' });
+    else if (status === 'Partial') { const want = Math.min(parseFloat($('inv-received').value) || 0, gross); if (want - got > 0.004) inv.receipts.push({ date: todayStr(), amount: r2(want - got), ref: 'Set via invoice edit' }); }
+    else if (status === 'Unpaid' && got > 0.004) showToast('Receipts kept', 'Existing receipts are preserved. Remove them in Accounts Receivable if needed.');
+  }
   else {
     const inv = Object.assign({ id: 'inv-' + Date.now(), currency: 'INR', receipts: [] }, data);
     const t0 = invTotals(inv), gross = r2(t0.gross + t0.tcs), status = creditRef ? 'Unpaid' : $('inv-status').value;
@@ -3254,7 +3292,7 @@ document.querySelector('#tab-settings').insertAdjacentHTML('afterend', `<section
   </div></section>`);
 document.body.insertAdjacentHTML('beforeend', `<div id="reset-modal" style="z-index:70" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4"><div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden"><div class="p-5 border-b border-slate-200 bg-rose-50"><h3 class="font-bold text-lg text-rose-900">Final confirmation</h3></div><div class="p-6 space-y-4 text-sm text-slate-700"><p>Erase <b>ALL</b> data on this device? This cannot be undone.</p><div class="flex justify-end space-x-3 pt-4 border-t"><button onclick="closeModal('reset-modal')" class="px-4 py-2 border rounded-xl font-medium text-slate-600">Cancel</button><button onclick="doReset()" class="px-5 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-semibold">Yes, erase everything</button></div></div></div></div>`);
 function resetCheck() { const ok = $('reset-ack').checked && $('reset-type').value.trim() === 'RESET', b = $('reset-go'); b.disabled = !ok; b.style.opacity = ok ? '1' : '.4'; b.style.cursor = ok ? 'pointer' : 'not-allowed'; }
-function renderReset() { $('reset-count').innerHTML = `Currently stored: <b>${appState.invoices.length}</b> invoices, <b>${(appState.advances || []).length}</b> advance receipts, <b>${appState.payables.length}</b> vendor bills, <b>${appState.costings.length}</b> cost sheets, <b>${appState.customers.length}</b> customers, <b>${appState.vendors.length}</b> vendors.`; resetCheck(); }
+function renderReset() { $('reset-count').innerHTML = `Currently stored: <b>${appState.invoices.length}</b> invoices, <b>${(appState.advances || []).length}</b> advance receipts, <b>${appState.payables.filter(p=>!p.deleted).length}</b> vendor bills, <b>${appState.costings.filter(c=>!c.deleted).length}</b> cost sheets, <b>${appState.customers.length}</b> customers, <b>${appState.vendors.length}</b> vendors.`; resetCheck(); }
 function resetAskFinal() { resetCheck(); if ($('reset-go').disabled) return; openModal('reset-modal'); }
 function doReset() {
   const keep = $('reset-keep').checked, old = appState.settings || {};
@@ -3470,17 +3508,19 @@ function exportGstrAct() {
       .concat(Object.keys(st).sort().map(k => n$(pT(k), [st[k].t, st[k].g])), [[], [{ v: '4. Eligible ITC', s: 1 }], n$('(A)(5) All other ITC – ESTIMATE (rate % × vendor bills, or GST on bills marked eligible); head-wise split not recorded', [itc]), [],
       [{ v: '6.1 Payment of tax', s: 1 }], n$('Total tax liability (3.1(a) + IGST on 3.1(b))', [liab]), n$('Less: ITC (estimate) – set off in the order prescribed by Sec 49', [itc]), [{ v: 'Net tax payable in cash', s: 1 }, { v: net, s: 4 }], [],
       ['Working statement for filing support. ITC and reverse charge must be confirmed against GSTR-2B / vendor invoices. Income-tax TCS on overseas packages is not a GST item and is excluded.']]);
-    const B2B = x => [x.i.clientGstin, x.i.clientName, x.i.number, x.i.date, pT(x.pos), 'N', 'Regular', x.rate, x.first ? x.gross : '', x.taxable, x.igst, x.cgst, x.sgst, 0];
+    if (window.__gstrMode) { window.__GSTR = { c, period, label, all, live, L, inv0, cn, b2b, b2cl, exp, cdnr, cdnur, exCn, g7, advs, adjs, rcv, adj, hsn, docs, n31, pT, own2, reg }; return; }
+    
     const sheets = [{ name: 'GSTR-3B', rows: s1, w: [86, 18, 18, 18, 18], ht: { 0: 22, 1: 22, 2: 22, 3: 22, 4: 22 } },
-      tableSheet('4A B2B', 'GSTR-1 Table 4A – B2B supplies (registered recipients) – ' + label, ['GSTIN/UIN', 'Receiver name', 'Invoice no', 'Invoice date', 'Place of supply', 'Reverse charge', 'Invoice type', 'Rate %', 'Invoice value', 'Taxable value', 'IGST', 'CGST', 'SGST/UTGST', 'Cess'], b2b.map(B2B), 8, [20, 26, 16, 12, 24, 9, 10, 8, 15, 15, 13, 13, 13, 8]),
-      tableSheet('5 B2CL', `GSTR-1 Table 5 – B2C Large (inter-State, invoice value above ₹${B2CL_LIMIT.toLocaleString('en-IN')}) – ` + label, ['Invoice no', 'Invoice date', 'Place of supply', 'Rate %', 'Invoice value', 'Taxable value', 'IGST', 'Cess'], b2cl.map(x => [x.i.number, x.i.date, pT(x.pos), x.rate, x.first ? x.gross : '', x.taxable, x.igst, 0]), 4, [16, 12, 26, 8, 15, 15, 13, 8]),
-      tableSheet('6A Exports', 'GSTR-1 Table 6A – Exports of services – ' + label, ['Export type', 'Invoice no', 'Invoice date', 'Rate %', 'Invoice value', 'Taxable value', 'IGST'], exp.map(x => [x.rate > 0 ? 'WPAY' : 'WOPAY', x.i.number, x.i.date, x.rate, x.first ? x.gross : '', x.taxable, x.igst]), 4, [12, 16, 12, 8, 15, 15, 13]),
-      tableSheet('7 B2CS', 'GSTR-1 Table 7 – B2C Small (state-wise, rate-wise; credit notes netted) – ' + label, ['Type', 'Place of supply', 'Rate %', 'Taxable value', 'IGST', 'CGST', 'SGST/UTGST', 'Cess'], Object.values(g7).map(x => [x.t, x.pos, x.rate, x.taxable, x.igst, x.cgst, x.sgst, 0]), 3, [14, 26, 8, 15, 13, 13, 13, 8]),
-      tableSheet('9B CDNR', 'GSTR-1 Table 9B – Credit notes to registered persons – ' + label, ['GSTIN/UIN', 'Receiver name', 'Note no', 'Note date', 'Original invoice', 'Place of supply', 'Note type', 'Rate %', 'Note value', 'Taxable value', 'IGST', 'CGST', 'SGST/UTGST'], cdnr.map(x => [x.i.clientGstin, x.i.clientName, x.i.number, x.i.date, x.i.refNumber || '', pT(x.pos), 'C', x.rate, x.first ? A(x.gross) : '', A(x.taxable), A(x.igst), A(x.cgst), A(x.sgst)]), 8, [20, 26, 16, 12, 16, 24, 8, 8, 15, 15, 13, 13, 13]),
-      tableSheet('9B CDNUR', 'GSTR-1 Table 9B – Credit notes to unregistered persons (inter-State, above limit) – ' + label, ['Note no', 'Note date', 'Original invoice', 'Place of supply', 'Rate %', 'Note value', 'Taxable value', 'IGST'], cdnur.concat(exCn).map(x => [x.i.number, x.i.date, x.i.refNumber || '', pT(x.pos), x.rate, x.first ? A(x.gross) : '', A(x.taxable), A(x.igst)]), 4, [16, 12, 16, 26, 8, 15, 15, 13]),
+      tableSheet('b2b', 'GSTR-1 Table 4A, 4B, 4C, 6B, 6C - B2B Invoices - ' + label, ['GSTIN/UIN of Recipient', 'Receiver Name', 'Invoice Number', 'Invoice date', 'Invoice Value', 'Place Of Supply', 'Reverse Charge', 'Applicable % of Tax Rate', 'Invoice Type', 'E-Commerce GSTIN', 'Rate', 'Taxable Value', 'Cess Amount'], b2b.map(x => [x.i.clientGstin, x.i.clientName, x.i.number, x.i.date, x.first ? x.gross : '', pT(x.pos), 'N', '', 'Regular', '', x.rate, x.taxable, 0]), 10, [22, 26, 16, 12, 15, 24, 15, 22, 15, 20, 10, 15, 12]),
+      tableSheet('b2cl', 'GSTR-1 Table 5 - B2C (Large) Invoices - ' + label, ['Invoice Number', 'Invoice date', 'Invoice Value', 'Place Of Supply', 'Applicable % of Tax Rate', 'Rate', 'Taxable Value', 'Cess Amount', 'E-Commerce GSTIN'], b2cl.map(x => [x.i.number, x.i.date, x.first ? x.gross : '', pT(x.pos), '', x.rate, x.taxable, 0, '']), 5, [16, 12, 15, 24, 22, 10, 15, 12, 20]),
+      tableSheet('exp', 'GSTR-1 Table 6A - Exports - ' + label, ['Export Type', 'Invoice Number', 'Invoice date', 'Invoice Value', 'Port Code', 'Shipping Bill Number', 'Shipping Bill Date', 'Applicable % of Tax Rate', 'Rate', 'Taxable Value', 'Cess Amount'], exp.map(x => [x.rate > 0 ? 'WPAY' : 'WOPAY', x.i.number, x.i.date, x.first ? x.gross : '', '', '', '', '', x.rate, x.taxable, 0]), 8, [12, 16, 12, 15, 12, 20, 15, 22, 10, 15, 12]),
+      tableSheet('b2cs', 'GSTR-1 Table 7 - B2C (Small) Invoices - ' + label, ['Type', 'Place Of Supply', 'Applicable % of Tax Rate', 'Rate', 'Taxable Value', 'Cess Amount', 'E-Commerce GSTIN'], Object.values(g7).map(x => ['OE', x.pos, '', x.rate, x.taxable, 0, '']), 3, [10, 24, 22, 10, 15, 12, 20]),
+      tableSheet('cdnr', 'GSTR-1 Table 9B - Credit / Debit Notes (Registered) - ' + label, ['GSTIN/UIN of Recipient', 'Receiver Name', 'Note/Refund Voucher Number', 'Note/Refund Voucher date', 'Document Type', 'Place Of Supply', 'Reverse Charge', 'Note/Refund Voucher Value', 'Applicable % of Tax Rate', 'Rate', 'Taxable Value', 'Cess Amount'], cdnr.map(x => [x.i.clientGstin, x.i.clientName, x.i.number, x.i.date, 'C', pT(x.pos), 'N', x.first ? A(x.gross) : '', '', x.rate, A(x.taxable), 0]), 9, [22, 26, 25, 25, 15, 24, 15, 25, 22, 10, 15, 12]),
+      tableSheet('cdnur', 'GSTR-1 Table 9B - Credit / Debit Notes (Unregistered) - ' + label, ['UR Type', 'Note/Refund Voucher Number', 'Note/Refund Voucher date', 'Document Type', 'Place Of Supply', 'Note/Refund Voucher Value', 'Applicable % of Tax Rate', 'Rate', 'Taxable Value', 'Cess Amount'], cdnur.concat(exCn).map(x => [isExp(x) ? 'EXPWP' : 'B2CL', x.i.number, x.i.date, 'C', pT(x.pos), x.first ? A(x.gross) : '', '', x.rate, A(x.taxable), 0]), 7, [15, 25, 25, 15, 24, 25, 22, 10, 15, 12]),
       tableSheet('11A Advances received', 'GSTR-1 Table 11A – Advances received (tax paid on receipt) – ' + label, ['Place of supply', 'Rate %', 'Gross advance', 'Taxable value', 'IGST', 'CGST', 'SGST/UTGST'], rcv.map(x => [x.pos, x.rate, x.gross, x.taxable, x.igst, x.cgst, x.sgst]), 2, [26, 8, 16, 15, 13, 13, 13]),
       tableSheet('11B Advances adjusted', 'GSTR-1 Table 11B – Advances adjusted against invoices – ' + label, ['Place of supply', 'Rate %', 'Gross advance adjusted', 'Taxable value', 'IGST', 'CGST', 'SGST/UTGST'], adj.map(x => [x.pos, x.rate, x.gross, x.taxable, x.igst, x.cgst, x.sgst]), 2, [26, 8, 20, 15, 13, 13, 13]),
-      tableSheet('12 HSN summary', 'GSTR-1 Table 12 – HSN / SAC summary – ' + label, ['HSN/SAC', 'Description', 'UQC', 'Rate %', 'Quantity', 'Total value', 'Taxable value', 'IGST', 'CGST', 'SGST/UTGST'], hsn.map(x => [x.hsn, x.desc, 'OTH-OTHERS', x.rate, x.qty, x.gross, x.taxable, x.igst, x.cgst, x.sgst]), 4, [12, 34, 14, 8, 10, 15, 15, 13, 13, 13]),
+      tableSheet('hsn', 'GSTR-1 Table 12 - HSN - ' + label, ['HSN', 'Description', 'UQC', 'Total Quantity', 'Total Value', 'Rate', 'Taxable Value', 'Integrated Tax Amount', 'Central Tax Amount', 'State/UT Tax Amount', 'Cess Amount'], hsn.map(x => [x.hsn, x.desc, 'OTH-OTHERS', x.qty, x.gross, x.rate, x.taxable, x.igst, x.cgst, x.sgst, 0]), 5, [12, 34, 14, 15, 15, 10, 15, 22, 20, 22, 12]),
+      tableSheet('Tax recon', 'Reconciliation - tax split per invoice line (NOT for GST portal upload) - ' + label, ['Invoice Number', 'Invoice date', 'Place Of Supply', 'Rate', 'Taxable Value', 'IGST', 'CGST', 'SGST/UTGST', 'Invoice Value'], inv0.concat(cn).map(x => [x.i.number, x.i.date, pT(x.pos), x.rate, x.taxable, x.igst, x.cgst, x.sgst, x.first ? x.gross : '']), 3, [16, 12, 24, 8, 15, 13, 13, 13, 15]),
       tableSheet('13 Documents issued', 'GSTR-1 Table 13 – Documents issued – ' + label, ['Nature of document', 'Sr. no. from', 'Sr. no. to', 'Total number', 'Cancelled', 'Net issued'], docs, 3, [30, 18, 18, 14, 12, 12])];
     const blob = buildXlsx(sheets, logoForXlsx()), u = URL.createObjectURL(blob), a = document.createElement('a');
     a.href = u; a.download = `GoNomads_GSTR1_3B_${period}.xlsx`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 1500);
@@ -3500,7 +3540,7 @@ const ck=t=>{let h=2166136261;for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=M
 async function snapList(){try{return JSON.parse(await IDB.get('snaps')||'[]')}catch(e){return[]}}
 async function snapAdd(label){const l=await snapList();l.unshift({at:new Date().toISOString(),label,inv:appState.invoices.length,data:JSON.stringify(appState)});return IDB.set('snaps',JSON.stringify(l.slice(0,7)))}
 async function snapAuto(){const l=await snapList();if(!appState.invoices.length&&!appState.payables.length)return;if(!l.length||Date.now()-new Date(l[0].at)>864e5)snapAdd('Automatic daily')}
-function buildBackup(){appState.settings.lastBackup=todayStr();const body=JSON.stringify(appState),o=JSON.parse(body);o._meta={app:'GoNomads',schema:3,exportedAt:new Date().toISOString(),counts:{invoices:o.invoices.length,payables:o.payables.length,customers:o.customers.length},sum:ck(body)};return o}
+function buildBackup(){appState.settings.lastBackup=todayStr();const body=JSON.stringify(appState),o=JSON.parse(body);o._meta={app:'GoNomads',schema:3,exportedAt:new Date().toISOString(),counts:{invoices:o.invoices.length,payables:o.payables.filter(p=>!p.deleted).length,customers:o.customers.length},sum:ck(body)};return o}
 exportBackup=function(){persistData();flushSave();download(buildBackup(),`GoNomads_Backup_${todayStr()}.json`);showToast('Exported','Backup downloaded. Keep a copy off this device.')};
 function validateBackup(p){if(!p||typeof p!=='object'||!Array.isArray(p.invoices))throw new Error('Not a Go Nomads backup (invoices missing).');
  ['costings','payables','customers','vendors','ledger','advances'].forEach(k=>{if(p[k]!==undefined&&!Array.isArray(p[k]))throw new Error('Corrupt section: '+k)});
@@ -3881,6 +3921,135 @@ window.addEventListener('load',()=>setTimeout(snapAuto,1500));
   window.addEventListener('offline',function(){show(false)});
   if(!navigator.onLine)window.addEventListener('load',function(){show(false)});
 })();
+</script>
+<script>
+/* Go Nomads v2 add-ons: audit trail, period lock, purge, id sanitiser, GSTIN checksum, self-test */
+function gstinChk(g){const c='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';let s=0;for(let i=0;i<14;i++){const v=c.indexOf(g[i])*(i%2?2:1);s+=Math.floor(v/36)+v%36;}return c[(36-s%36)%36]===g[14];}
+(function(){
+const lockD=()=>(appState.settings&&appState.settings.lockUpTo)||'';
+const locked=d=>{const l=lockD();return !!(l&&d&&d<=l);};
+const find=(k,id)=>(appState[k]||[]).find(x=>String(x.id)===String(id));
+window.logAudit=function(a,r,d){const A=appState.audit=appState.audit||[];A.push({t:new Date().toISOString(),u:(appState.settings&&appState.settings.auditUser)||'',a:a,r:String(r==null?'':r),d:String(d||'')});if(A.length>3000)A.splice(0,A.length-3000);};
+const _ns=normalizeState;
+normalizeState=function(s){const o=_ns(s);o.audit=Array.isArray(s.audit)?s.audit:[];
+ if(s.settings)['lockUpTo','auditUser'].forEach(k=>{if(s.settings[k])o.settings[k]=s.settings[k];});
+ const map={};['invoices','costings','payables','ledger','advances'].forEach(k=>{(Array.isArray(o[k])?o[k]:[]).forEach(r=>{if(typeof r.id==='string'&&!/^[\w.-]+$/.test(r.id)){const n=r.id.replace(/[^\w.-]/g,'_');map[r.id]=n;r.id=n;}});});
+ (o.costings||[]).forEach(c=>{if(map[c.invoiceId])c.invoiceId=map[c.invoiceId];});(o.invoices||[]).forEach(i=>{if(map[i.refId])i.refId=map[i.refId];});return o;};
+if(!appState.audit)appState.audit=[];
+function W(n,pre,post){const o=window[n];if(typeof o!=='function')return;window[n]=function(){const a=[].slice.call(arguments);let c;if(pre){c=pre(a);if(c===false)return;}const r=o.apply(this,a);try{post&&post(c,a);}catch(e){}return r;};}
+const blk=()=>{showToast('Period locked','Books are locked up to '+lockD()+'. Unlock in Reset > Audit & Controls (the unlock is logged).');return false;};
+const fv=v=>{const s=JSON.stringify(v);return s&&s.length>60?s.slice(0,57)+'...':s;};
+const dsum=(b,a)=>{const x=JSON.parse(b);return Object.keys(a).filter(k=>JSON.stringify(a[k])!==JSON.stringify(x[k])).map(k=>k+': '+fv(x[k])+' -> '+fv(a[k])).join('; ');};
+const del=(n,k,lab,lk)=>W(n,a=>{const r=find(k,a[0]);if(lk&&r&&locked(r.date))return blk();return r;},(r,a)=>{if(r&&(r.deleted||!find(k,a[0])))logAudit('DELETE '+lab,r.number||r.name||r.vendor||r.head||a[0],'');});
+del('deleteInvoice','invoices','invoice',1);del('deletePayable','payables','vendor bill',1);del('deleteLedger','ledger','ledger entry',1);del('deleteCosting','costings','cost sheet');del('deleteAdvance','advances','advance receipt');
+W('openEditInvoice',a=>{const r=find('invoices',a[0]);if(r&&locked(r.date))return blk();});
+W('cancelInvoice',a=>{const r=find('invoices',a[0]);if(r&&locked(r.date))return blk();return r;},r=>{if(r&&r.cancelled)logAudit('CANCEL invoice',r.number,'');});
+W('saveInvoice',()=>{const e=editingInvId;if(!e&&locked($('inv-date').value))return blk();const r=e?find('invoices',e):null;return{e:e,b:r?JSON.stringify(r):null,n:appState.invoices.length};},c=>{if(c.e){const r=find('invoices',c.e),d=dsum(c.b,r);if(d)logAudit('EDIT invoice',r.number,d);}else if(appState.invoices.length>c.n){const r=appState.invoices[0];logAudit(r.isCN?'CREATE credit note':'CREATE invoice',r.number,r.clientName+' | '+r.date);}});
+W('savePayable',()=>appState.payables.length,(n)=>{if(appState.payables.length>n){const p=appState.payables[appState.payables.length-1];logAudit('CREATE vendor bill',p.ref||p.vendor,p.vendor+' | '+p.date+' | '+p.bill);}});
+W('saveLedger',()=>appState.ledger.length,(n)=>{if(appState.ledger.length>n){const l=appState.ledger[appState.ledger.length-1];logAudit('CREATE ledger entry',l.head,l.date+' | '+l.amount);}});
+const cnt=()=>appState.invoices.reduce((a,i)=>a+(i.receipts||[]).length,0)+appState.payables.reduce((a,p)=>a+(p.payments||[]).length,0);
+W('savePayment',()=>cnt(),n=>{if(cnt()>n)logAudit('PAYMENT recorded','','receipt/payment entry added');});
+window.gnLock=function(){const cur=lockD();const v=prompt('Lock books up to date (YYYY-MM-DD). Invoices, vendor bills and ledger entries dated on or before it cannot be edited, cancelled or deleted. Leave blank to unlock.',cur||'');if(v===null)return;const t=v.trim();if(t&&!/^\d{4}-\d{2}-\d{2}$/.test(t)){showToast('Invalid date','Use YYYY-MM-DD, e.g. 2026-10-31.');return;}appState.settings.lockUpTo=t;logAudit(t?'LOCK books':'UNLOCK books','',t||cur);persistData();gnPanel();};
+window.gnUser=function(){const v=prompt('Your name for the audit log:',appState.settings.auditUser||'');if(v===null)return;appState.settings.auditUser=v.trim();persistData();gnPanel();};
+window.gnPurge=async function(){const v=prompt('Permanently remove records deleted more than N days ago (0 = all deleted records). A snapshot is taken first.','30');if(v===null)return;const d=parseInt(v,10);if(isNaN(d)||d<0)return;await snapAdd('Before purge');const cut=Date.now()-d*864e5;let n=0;['payables','costings','ledger'].forEach(k=>{const keep=appState[k].filter(x=>!(x.deleted&&(x.deleted===true||x.deleted<=cut)));n+=appState[k].length-keep.length;appState[k]=keep;});logAudit('PURGE deleted','',n+' record(s) older than '+d+' day(s)');persistData();gnPanel();showToast('Purged',n+' deleted record(s) removed.');};
+const bs='padding:8px 12px;border-radius:10px;background:#0f172a;color:#fff;font-size:12px;font-weight:600;';
+window.gnAuditView=function(){let o=document.getElementById('gn-aud');if(o)o.remove();o=document.createElement('div');o.id='gn-aud';o.style.cssText='position:fixed;inset:0;z-index:9999;background:#fff;overflow:auto;padding:16px;font:13px system-ui';const A=(appState.audit||[]).slice().reverse(),td='<td style="padding:6px 8px;vertical-align:top">';o.innerHTML='<div style="display:flex;gap:8px;margin-bottom:12px"><b style="flex:1;font-size:16px">Audit log ('+A.length+', latest 500 shown)</b><button onclick="gnAuditCsv()" style="'+bs+'">Export CSV</button><button onclick="document.getElementById(\'gn-aud\').remove()" style="'+bs+'">Close</button></div><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse"><tr style="text-align:left;background:#f1f5f9"><th style="padding:6px 8px">Time (UTC)</th><th>User</th><th>Action</th><th>Ref</th><th>Detail</th></tr>'+A.slice(0,500).map(r=>'<tr style="border-top:1px solid #e2e8f0">'+td+esc(r.t.slice(0,19).replace('T',' '))+'</td>'+td+esc(r.u)+'</td>'+td+esc(r.a)+'</td>'+td+esc(r.r)+'</td>'+td+esc(r.d)+'</td></tr>').join('')+'</table></div>';document.body.appendChild(o);};
+window.gnAuditCsv=function(){const q=v=>'"'+String(v).replace(/"/g,'""')+'"';const csv='Time (UTC),User,Action,Reference,Detail\n'+(appState.audit||[]).map(r=>[r.t,r.u,r.a,r.r,r.d].map(q).join(',')).join('\n');const u=URL.createObjectURL(new Blob([csv],{type:'text/csv'})),a=document.createElement('a');a.href=u;a.download='GoNomads_audit_log.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500);};
+window.gnSelfTest=function(){const t=[],ok=(n,c)=>t.push((c?'PASS ':'FAIL ')+n);ok('0.1+0.2+0.3 = 0.6',sum([0.1,0.2,0.3])===0.6);ok('1.1 x 3 = 3.3',r2(1.1*3)===3.3);ok('GSTIN with correct check digit accepted',GSTIN_RE.test('27AAPFU0939F1ZV'));ok('GSTIN with wrong check digit rejected',!GSTIN_RE.test('27AAPFU0939F1Z0'));ok('Unsafe record id sanitised on load',normalizeState({invoices:[{id:"a'b"}]}).invoices[0].id==='a_b');console.log(t.join('\n'));const f=t.filter(x=>x[0]==='F').length;showToast(f?'Self-test: '+f+' FAILED':'Self-test passed',t.length+' checks. Details in the browser console.');return t;};
+function gnPanel(){const host=$('reset-count');if(!host)return;let p=$('gn-ctl');if(!p){p=document.createElement('div');p.id='gn-ctl';host.parentNode.appendChild(p);}p.innerHTML='<div style="margin-top:20px;padding:16px;border:1px solid #cbd5e1;border-radius:16px;background:#fff"><h3 style="font-weight:700;margin-bottom:8px">Audit &amp; Controls</h3><p style="font-size:12px;color:#475569;margin-bottom:10px">Books locked up to: <b>'+(lockD()||'not locked')+'</b> &middot; Audit user: <b>'+esc(appState.settings.auditUser||'not set')+'</b> &middot; Log entries: <b>'+(appState.audit||[]).length+'</b></p><div style="display:flex;flex-wrap:wrap;gap:8px">'+[['gnLock()','Lock / unlock books'],['gnUser()','Set audit user'],['gnAuditView()','View audit log'],['gnPurge()','Purge old deleted records'],['gnSelfTest()','Run self-test']].map(b=>'<button onclick="'+b[0]+'" style="'+bs+'">'+b[1]+'</button>').join('')+'</div></div>';}
+W('renderReset',null,()=>gnPanel());
+if(/[?&]selftest/.test(location.search))setTimeout(window.gnSelfTest,1500);
+})();
+
+</script>
+<script>
+/* Go Nomads v2.1: strict phone validation + GST Offline Tool workbook + portal JSON */
+(function(){
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const fd=d=>{const p=String(d||'').split('-');return p.length===3?p[2]+'-'+MON[+p[1]-1]+'-'+p[0].slice(2):d;};
+const jd=d=>{const p=String(d||'').split('-');return p.length===3?p[2]+'-'+p[1]+'-'+p[0]:d;};
+const cd=p=>String(p).slice(0,2), ab=Math.abs, S=(a,f)=>r2(a.reduce((s,x)=>s+(Number(f(x))||0),0));
+/* ---------- phone ---------- */
+window.gnPhone=function(v){const parts=String(v||'').split(/[\/,;]/).map(s=>s.trim()).filter(Boolean);if(!parts.length)return{ok:false,msg:'Enter a phone number.'};const out=[];
+ for(const p of parts){if(!/^\+?[\d\s()-]+$/.test(p))return{ok:false,msg:'"'+p+'": only digits, spaces, ( ) - and a leading + are allowed.'};
+  let d=p.replace(/\D/g,''),intl=p.startsWith('+');
+  if(d.length===12&&d.startsWith('91')){d=d.slice(2);intl=false;}else if(!intl&&d.length===11&&d[0]==='0'&&/[6-9]/.test(d[1]))d=d.slice(1);
+  if(!intl&&/^[6-9]\d{9}$/.test(d)){if(/^(\d)\1{9}$/.test(d)||d==='9876543210')return{ok:false,msg:'"'+p+'" does not look like a real mobile number.'};out.push('+91 '+d.slice(0,5)+' '+d.slice(5));}
+  else if(!intl&&/^0[1-8]\d{9}$/.test(d))out.push(d);
+  else if(intl&&/^[1-9]\d{7,14}$/.test(d)&&!(d.startsWith('91')&&d.length<12))out.push('+'+d);
+  else return{ok:false,msg:'"'+p+'" is not valid. Use a 10-digit mobile starting 6-9, a landline with STD code (0 + 10 digits), or +country code for foreign numbers.'};}
+ return{ok:true,norm:out.join(' / ')};};
+const PH=['m-contact','inv-client-contact','adv-contact','co-phone','sh-phone'];
+function phCheck(list){for(const a of list){const el=document.getElementById(a[0]);if(!el)continue;const v=el.value.trim();if(!v){if(a[1]){showToast('Phone required','Enter the client contact number.');return false;}continue;}const r=gnPhone(v);if(!r.ok){showToast('Invalid phone number',r.msg);el.focus();el.style.borderColor='#e11d48';return false;}el.value=r.norm;el.style.borderColor='';}return true;}
+function W2(n,pre){const o=window[n];if(typeof o!=='function')return;window[n]=function(e){if(pre()===false){if(e&&e.preventDefault)e.preventDefault();return;}return o.apply(this,arguments);};}
+W2('saveInvoice',()=>phCheck([['inv-client-contact',1]]));W2('saveAdvance',()=>phCheck([['adv-contact',0]]));W2('saveCompany',()=>phCheck([['co-phone',0]]));
+document.addEventListener('input',e=>{const t=e.target;if(t&&PH.indexOf(t.id)>=0){const v=t.value.replace(/[^\d+\s()\/,;-]/g,'');if(v!==t.value)t.value=v;t.style.borderColor='';}});
+document.addEventListener('focusout',e=>{const t=e.target;if(t&&PH.indexOf(t.id)>=0&&t.value.trim()){const r=gnPhone(t.value);t.style.borderColor=r.ok?'':'#e11d48';t.title=r.ok?'':r.msg;if(r.ok)t.value=r.norm;}});
+window.gnPhoneScan=function(){const bad=[],ck=(w,n,v)=>{if(v&&!gnPhone(v).ok)bad.push(w+': '+n+' ('+v+')');};appState.customers.forEach(c=>ck('Client',c.name,c.contact));appState.vendors.forEach(c=>ck('Vendor',c.name,c.contact));appState.invoices.forEach(i=>ck('Invoice '+i.number,i.clientName,i.clientContact));alert(bad.length?bad.length+' invalid phone number(s):\n\n'+bad.slice(0,25).join('\n')+(bad.length>25?'\n...':'')+'\n\nOpen each record and correct it.':'All stored phone numbers are valid.');};
+const _rr=window.renderReset;if(typeof _rr==='function')window.renderReset=function(){const r=_rr.apply(this,arguments);const d=document.querySelector('#gn-ctl div[style*="flex-wrap"]');if(d&&!document.getElementById('gn-ph')){d.insertAdjacentHTML('beforeend','<button id="gn-ph" onclick="gnPhoneScan()" style="padding:8px 12px;border-radius:10px;background:#0f172a;color:#fff;font-size:12px;font-weight:600">Check phone numbers</button>');}return r;};
+/* ---------- GST Offline Tool workbook ---------- */
+function tpl(name,title,sm,hd,rows,nc,w){const lab=hd.map((h,i)=>({v:sm[i]?sm[i][0]:'',s:2})),val=hd.map((h,i)=>sm[i]?{v:sm[i][1],s:3}:'');const r=[[{v:title,s:5}],lab,val,hd.map(h=>({v:h,s:2}))];rows.forEach(x=>r.push(x.map((c,i)=>nc.indexOf(i)>=0?{v:r2(Number(c)||0),s:3}:c)));return{name:name,rows:r,w:w};}
+function hsnGroups(G,f){const m={};G.L.filter(f).forEach(x=>{const k=x.hsn+'|'+x.rate,o=m[k]=m[k]||{hsn:x.hsn,desc:x.desc,rate:x.rate,qty:0,taxable:0,igst:0,cgst:0,sgst:0};o.qty+=x.n*(x.cn?-1:1);['taxable','igst','cgst','sgst'].forEach(q=>o[q]=r2(o[q]+x[q]));});return Object.values(m).map(o=>(o.qty=Math.max(0,o.qty),o));}
+function iv(a){const m={};a.forEach(x=>m[x.i.id]=ab(x.gross));return r2(Object.values(m).reduce((s,v)=>s+v,0));}
+const nu=a=>new Set(a.map(x=>x.i.id)).size, isE=x=>x.pos==='96';
+function nilRows(G){const nl=(r,i)=>S(G.n31.filter(x=>G.reg(x.i)===r&&(x.pos!==G.own2)===i),x=>x.taxable);return [['Inter-State supplies to registered persons',nl(true,true),0,0],['Intra-State supplies to registered persons',nl(true,false),0,0],['Inter-State supplies to unregistered persons',nl(false,true),0,0],['Intra-State supplies to unregistered persons',nl(false,false),0,0]];}
+function buildSheets(G){const pT=G.pT,sh=[],cnl=G.cdnur.concat(G.exCn);
+ sh.push(tpl('b2b','Summary For B2B, SEZ, DE (4A, 4B, 6B, 6C)',{0:['No. of Recipients',new Set(G.b2b.map(x=>x.i.clientGstin)).size],2:['No. of Invoices',nu(G.b2b)],4:['Total Invoice Value',iv(G.b2b)],11:['Total Taxable Value',S(G.b2b,x=>x.taxable)],12:['Total Cess',0]},['GSTIN/UIN of Recipient','Receiver Name','Invoice Number','Invoice date','Invoice Value','Place Of Supply','Reverse Charge','Applicable % of Tax Rate','Invoice Type','E-Commerce GSTIN','Rate','Taxable Value','Cess Amount'],G.b2b.map(x=>[x.i.clientGstin,x.i.clientName,x.i.number,fd(x.i.date),x.gross,pT(x.pos),'N','','Regular','',x.rate,x.taxable,0]),[4,10,11,12],[22,26,16,12,15,24,15,22,15,20,10,15,12]));
+ sh.push(tpl('b2cl','Summary For B2CL(5)',{0:['No. of Invoices',nu(G.b2cl)],2:['Total Invoice Value',iv(G.b2cl)],6:['Total Taxable Value',S(G.b2cl,x=>x.taxable)],7:['Total Cess',0]},['Invoice Number','Invoice date','Invoice Value','Place Of Supply','Applicable % of Tax Rate','Rate','Taxable Value','Cess Amount','E-Commerce GSTIN'],G.b2cl.map(x=>[x.i.number,fd(x.i.date),x.gross,pT(x.pos),'',x.rate,x.taxable,0,'']),[2,5,6,7],[16,12,15,24,22,10,15,12,20]));
+ const g7=Object.values(G.g7);
+ sh.push(tpl('b2cs','Summary For B2CS(7)',{4:['Total Taxable Value',S(g7,x=>x.taxable)],5:['Total Cess',0]},['Type','Place Of Supply','Applicable % of Tax Rate','Rate','Taxable Value','Cess Amount','E-Commerce GSTIN'],g7.map(x=>['OE',x.pos,'',x.rate,x.taxable,0,'']),[3,4,5],[10,24,22,10,15,12,20]));
+ sh.push(tpl('cdnr','Summary For CDNR(9B)',{0:['No. of Recipients',new Set(G.cdnr.map(x=>x.i.clientGstin)).size],2:['No. of Notes/Vouchers',nu(G.cdnr)],7:['Total Note/Refund Voucher Value',iv(G.cdnr)],10:['Total Taxable Value',S(G.cdnr,x=>ab(x.taxable))],11:['Total Cess',0]},['GSTIN/UIN of Recipient','Receiver Name','Note/Refund Voucher Number','Note/Refund Voucher date','Document Type','Place Of Supply','Reverse Charge','Note/Refund Voucher Value','Applicable % of Tax Rate','Rate','Taxable Value','Cess Amount'],G.cdnr.map(x=>[x.i.clientGstin,x.i.clientName,x.i.number,fd(x.i.date),'C',pT(x.pos),'N',ab(x.gross),'',x.rate,ab(x.taxable),0]),[7,9,10,11],[22,26,25,25,15,24,15,25,22,10,15,12]));
+ sh.push(tpl('cdnur','Summary For CDNUR(9B)',{1:['No. of Notes/Vouchers',nu(cnl)],5:['Total Note/Refund Voucher Value',iv(cnl)],8:['Total Taxable Value',S(cnl,x=>ab(x.taxable))],9:['Total Cess',0]},['UR Type','Note/Refund Voucher Number','Note/Refund Voucher date','Document Type','Place Of Supply','Note/Refund Voucher Value','Applicable % of Tax Rate','Rate','Taxable Value','Cess Amount'],cnl.map(x=>[isE(x)?(x.rate>0?'EXPWP':'EXPWOP'):'B2CL',x.i.number,fd(x.i.date),'C',pT(x.pos),ab(x.gross),'',x.rate,ab(x.taxable),0]),[5,7,8,9],[15,25,25,15,24,25,22,10,15,12]));
+ sh.push(tpl('exp','Summary For EXP(6)',{1:['No. of Invoices',nu(G.exp)],3:['Total Invoice Value',iv(G.exp)],5:['No. of Shipping Bill',0],9:['Total Taxable Value',S(G.exp,x=>x.taxable)],10:['Total Cess',0]},['Export Type','Invoice Number','Invoice date','Invoice Value','Port Code','Shipping Bill Number','Shipping Bill Date','Applicable % of Tax Rate','Rate','Taxable Value','Cess Amount'],G.exp.map(x=>[x.rate>0?'WPAY':'WOPAY',x.i.number,fd(x.i.date),x.gross,'','','','',x.rate,x.taxable,0]),[3,8,9,10],[12,16,12,15,12,20,15,22,10,15,12]));
+ sh.push(tpl('at','Summary For Advance Received (11B)',{3:['Total Advance Received',S(G.rcv,x=>x.gross)],4:['Total Cess',0]},['Place Of Supply','Applicable % of Tax Rate','Rate','Gross Advance Received','Cess Amount'],G.rcv.map(x=>[x.pos,'',x.rate,x.gross,0]),[2,3,4],[26,22,10,22,12]));
+ sh.push(tpl('atadj','Summary For Advance Adjusted (11B)',{3:['Total Advance Adjusted',S(G.adj,x=>x.gross)],4:['Total Cess',0]},['Place Of Supply','Applicable % of Tax Rate','Rate','Gross Advance Adjusted','Cess Amount'],G.adj.map(x=>[x.pos,'',x.rate,x.gross,0]),[2,3,4],[26,22,10,22,12]));
+ const nr=nilRows(G);
+ sh.push(tpl('exemp','Summary For Nil rated, exempted and non GST outward supplies (8)',{1:['Total Nil Rated Supplies',S(nr,x=>x[1])],2:['Total Exempted Supplies',0],3:['Total Non-GST Supplies',0]},['Description','Nil Rated Supplies','Exempted(other than nil rated/non GST supply)','Non-GST supplies'],nr,[1,2,3],[50,20,34,20]));
+ [['hsn(b2b)',x=>G.reg(x.i)],['hsn(b2c)',x=>!G.reg(x.i)]].forEach(p=>{const h=hsnGroups(G,p[1]);sh.push(tpl(p[0],'Summary For HSN(12)',{0:['No. of HSN',h.length],4:['Total Value',S(h,x=>x.taxable+x.igst+x.cgst+x.sgst)],6:['Total Taxable Value',S(h,x=>x.taxable)],7:['Total Integrated Tax',S(h,x=>x.igst)],8:['Total Central Tax',S(h,x=>x.cgst)],9:['Total State/UT Tax',S(h,x=>x.sgst)],10:['Total Cess',0]},['HSN','Description','UQC','Total Quantity','Total Value','Rate','Taxable Value','Integrated Tax Amount','Central Tax Amount','State/UT Tax Amount','Cess Amount'],h.map(x=>[x.hsn,x.desc,'OTH-OTHERS',x.qty,x.taxable+x.igst+x.cgst+x.sgst,x.rate,x.taxable,x.igst,x.cgst,x.sgst,0]),[3,4,5,6,7,8,9,10],[12,34,14,15,15,10,15,22,20,22,12]));});
+ const NM={'Credit note':'Credit Note','Receipt voucher':'Receipt Voucher'};
+ sh.push(tpl('docs','Summary of documents issued during the tax period (13)',{3:['Total Number',S(G.docs,x=>x[3])],4:['Total Cancelled',S(G.docs,x=>x[4])]},['Nature of Document','Sr. No. From','Sr. No. To','Total Number','Cancelled'],G.docs.map(x=>[NM[x[0]]||x[0],x[1],x[2],x[3],x[4]]),[3,4],[30,18,18,14,12]));
+ return sh;}
+/* ---------- portal JSON ---------- */
+function buildJson(G){const p=G.period,cdn=a=>a,grp=(a,kf)=>{const m=new Map();a.forEach(x=>{const k=kf(x);if(!m.has(k))m.set(k,[]);m.get(k).push(x);});return Array.from(m.values());};
+ const full=x=>({rt:x.rate,txval:r2(ab(x.taxable)),iamt:r2(ab(x.igst)),camt:r2(ab(x.cgst)),samt:r2(ab(x.sgst)),csamt:0}),part=x=>({rt:x.rate,txval:r2(ab(x.taxable)),iamt:r2(ab(x.igst)),csamt:0});
+ const its=(a,f)=>a.map((x,n)=>({num:n+1,itm_det:f(x)})),sply=pos=>cd(pos)!==cd(G.own2)?'INTER':'INTRA';
+ const inv=(g,f)=>({inum:g[0].i.number,idt:jd(g[0].i.date),val:r2(ab(g[0].gross)),pos:cd(g[0].pos),rchrg:'N',inv_typ:'R',itms:its(g,f)});
+ const note=(g,f)=>({ntty:'C',nt_num:g[0].i.number,nt_dt:jd(g[0].i.date),val:r2(ab(g[0].gross)),pos:cd(g[0].pos),rchrg:'N',inv_typ:'R',itms:its(g,f)});
+ const adv=a=>grp(a,x=>cd(x.pos)).map(g=>({pos:cd(g[0].pos),sply_ty:sply(g[0].pos),itms:g.map(x=>({rt:x.rate,ad_amt:r2(x.gross),iamt:r2(x.igst),camt:r2(x.cgst),samt:r2(x.sgst),csamt:0}))}));
+ const hs=f=>hsnGroups(G,f).map((x,n)=>({num:n+1,hsn_sc:x.hsn,desc:x.desc,uqc:'OTH',qty:x.qty,rt:x.rate,txval:x.taxable,iamt:x.igst,camt:x.cgst,samt:x.sgst,csamt:0}));
+ const nr=nilRows(G),DN={'Invoices for outward supply':1,'Credit note':5,'Receipt voucher':6};
+ const o={gstin:G.c.gstin,fp:p.slice(5,7)+p.slice(0,4),gt:0,cur_gt:0,hash:'hash',
+  b2b:grp(G.b2b,x=>x.i.clientGstin).map(cg=>({ctin:cg[0].i.clientGstin,inv:grp(cg,x=>x.i.id).map(g=>inv(g,full))})),
+  b2cl:grp(G.b2cl,x=>cd(x.pos)).map(pg=>({pos:cd(pg[0].pos),inv:grp(pg,x=>x.i.id).map(g=>({inum:g[0].i.number,idt:jd(g[0].i.date),val:r2(ab(g[0].gross)),itms:its(g,part)}))})),
+  b2cs:Object.values(G.g7).filter(x=>x.taxable||x.igst||x.cgst||x.sgst).map(x=>({sply_ty:x.t==='Inter State'?'INTER':'INTRA',pos:cd(x.pos),typ:'OE',rt:x.rate,txval:x.taxable,iamt:x.igst,camt:x.cgst,samt:x.sgst,csamt:0})),
+  cdnr:grp(G.cdnr,x=>x.i.clientGstin).map(cg=>({ctin:cg[0].i.clientGstin,nt:grp(cg,x=>x.i.id).map(g=>note(g,full))})),
+  cdnur:grp(G.cdnur.concat(G.exCn),x=>x.i.id).map(g=>{const n=note(g,part);n.typ=isE(g[0])?(g[0].rate>0?'EXPWP':'EXPWOP'):'B2CL';delete n.rchrg;delete n.inv_typ;if(isE(g[0]))delete n.pos;return n;}),
+  exp:grp(G.exp,x=>x.rate>0?'WPAY':'WOPAY').map(eg=>({exp_typ:eg[0].rate>0?'WPAY':'WOPAY',inv:grp(eg,x=>x.i.id).map(g=>({inum:g[0].i.number,idt:jd(g[0].i.date),val:r2(ab(g[0].gross)),itms:its(g,part)}))})),
+  at:adv(G.rcv),txpd:adv(G.adj),
+  nil:{inv:[['INTRB2B',nr[0]],['INTRAB2B',nr[1]],['INTRB2C',nr[2]],['INTRAB2C',nr[3]]].map(a=>({sply_ty:a[0],expt_amt:0,nil_amt:a[1][1],ngsup_amt:0}))},
+  hsn:{hsn_b2b:hs(x=>G.reg(x.i)),hsn_b2c:hs(x=>!G.reg(x.i))},
+  doc_issue:{doc_det:G.docs.map(d=>({doc_num:DN[d[0]]||1,docs:[{num:1,from:d[1],to:d[2],totnum:d[3],cancel:d[4],net_issue:d[3]-d[4]}]}))}};
+ ['b2b','b2cl','b2cs','cdnr','cdnur','exp','at','txpd'].forEach(k=>{if(!o[k].length)delete o[k];});return o;}
+/* ---------- pre-export checks ---------- */
+function check(G){const m=[],SL=[0,0.1,0.25,1,1.5,3,5,7.5,12,18,28],seen={};
+ if(!GSTIN_RE.test(G.c.gstin||''))m.push('Your own GSTIN is missing or invalid (Company settings).');
+ G.all.forEach(i=>{if(i.clientGstin&&!GSTIN_RE.test(i.clientGstin))m.push(i.number+': client GSTIN "'+i.clientGstin+'" is invalid, so it would be reported as B2C.');
+  if(!/^[A-Za-z0-9\/-]{1,16}$/.test(i.number||''))m.push(i.number+': invoice number must be 1-16 characters (letters, digits, / and - only).');
+  if(seen[i.number])m.push(i.number+': duplicate document number.');seen[i.number]=1;});
+ G.L.forEach(x=>{if(!/^\d{4,8}$/.test(String(x.hsn||'')))m.push(x.i.number+': HSN/SAC code "'+(x.hsn||'')+'" missing or not 4-8 digits.');if(SL.indexOf(x.rate)<0)m.push(x.i.number+': GST rate '+x.rate+'% is not a valid slab.');if(!x.pos)m.push(x.i.number+': place of supply missing.');});
+ return Array.from(new Set(m));}
+function dl(blob,name){const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500);}
+function run(json){window.__gstrMode=true;window.__GSTR=null;try{exportGstrAct();}finally{window.__gstrMode=false;}const G=window.__GSTR;if(!G){showToast('Export failed','Could not read the GST data.');return;}
+ if(G.period==='ALL'){showToast('Select a month','GSTR-1 is filed month by month. Choose one return period first.');return;}
+ const m=check(G);if(m.length&&!confirm('Fix these before filing ('+m.length+'):\n\n- '+m.slice(0,12).join('\n- ')+(m.length>12?'\n- ...':'')+'\n\nExport anyway?'))return;
+ const tag=(G.c.gstin||'GSTIN')+'_'+G.period.slice(5,7)+G.period.slice(0,4);
+ if(json){dl(new Blob([JSON.stringify(buildJson(G),null,1)],{type:'application/json'}),tag+'_GSTR1.json');showToast('JSON ready','Upload it on GST portal: Returns > GSTR-1 > Prepare Offline > Upload. gt / cur_gt are 0; the portal fills turnover from your profile.');}
+ else{dl(buildXlsx(buildSheets(G),null),'GSTR1_OfflineTool_'+tag+'.xlsx');showToast('Excel ready','Import it in the GST Offline Tool (Import File > Excel), then Generate File.');}}
+window.exportGstrTemplate=()=>run(false);window.exportGstrPortalJson=()=>run(true);window.gnGstr={buildSheets:buildSheets,buildJson:buildJson,check:check};
+const b=document.querySelector('button[onclick="exportGstrAct()"]');
+if(b){[['exportGstrTemplate()','GSTR-1 Excel (Offline Tool format)'],['exportGstrPortalJson()','GSTR-1 JSON (GST portal)']].reverse().forEach(a=>{const n=b.cloneNode(false);n.setAttribute('onclick',a[0]);n.innerHTML='<span>'+a[1]+'</span>';b.insertAdjacentElement('afterend',n);});}
+})();
+
 </script>
 </body>
 </html>
