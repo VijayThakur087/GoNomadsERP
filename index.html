@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0f172a">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; frame-src 'self' blob: data:; connect-src 'self'; object-src 'none'; base-uri 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; frame-src 'self' blob: data:; connect-src 'self' https://mxrlpkekvbwhrmtrvqfh.supabase.co wss://mxrlpkekvbwhrmtrvqfh.supabase.co; object-src 'none'; base-uri 'none'">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -4910,5 +4910,7 @@ if(b){[['exportGstrTemplate()','GSTR-1 Excel (Offline Tool format)'],['exportGst
   window.gnDateScan = function () { scan(document); };
 })();
 </script>
+<script src="supabase.js"></script>
+<script src="sync.js"></script>
 </body>
 </html>
