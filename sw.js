@@ -1,6 +1,6 @@
 /* Go Nomads ERP – service worker (offline support)
    Change VERSION each time you upload a new index.html / sync.js */
-const VERSION = 'gn-v5';
+const VERSION = 'gn-v6';
 const CORE = [
   './', './index.html', './sync.js', './supabase.js', './manifest.webmanifest',
   './favicon.png', './apple-touch-icon.png', './icon-192.png', './icon-512.png', './icon-maskable-512.png'

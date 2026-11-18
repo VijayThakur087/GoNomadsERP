@@ -38,28 +38,38 @@
     if (!b) {
       b = document.createElement('div'); b.id = 'sync-badge';
       b.style.cssText = 'position:fixed;left:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:99998;background:#0f172a;color:#fff;font:600 12px system-ui,sans-serif;padding:6px 10px;border-radius:999px;opacity:.92;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.3)';
-      b.onclick = function () { if (!user) askLogin(); else { paused = false; runSync(true); } };
+      b.onclick = function () { if (!user) askLogin(); else askMenu(); };
       document.body.appendChild(b);
     }
     var t = { ok: '🟢 Synced', busy: '🟡 Syncing…', off: '🔴 Offline – saved on this device', login: '🔒 Tap to log in', pause: '⏸ Sync paused – tap to resume', err: '🟠 Sync problem – tap to retry' };
     b.textContent = t[s] || s;
   }
 
+  function toast(t, m) { if (typeof showToast === 'function') showToast(t, m); else alert(t + ': ' + m); }
+  var OVERLAY = 'position:fixed;inset:0;z-index:99999;background:rgba(15,23,42,.85);display:flex;align-items:center;justify-content:center;padding:16px';
+  var CARD = 'background:#fff;border-radius:16px;padding:20px;width:100%;max-width:340px;font-family:system-ui,sans-serif';
+
   function askLogin() {
-    if (document.getElementById('sync-login')) return;
-    var d = document.createElement('div'); d.id = 'sync-login';
-    d.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(15,23,42,.85);display:flex;align-items:center;justify-content:center;padding:16px';
+    // "Skip" is shown only on a device that has already logged in once (and was not logged out)
+    var canSkip = !!localStorage.getItem('gn_sync_uid');
+    var old = document.getElementById('sync-login');
+    if (old) { if (old.dataset && old.dataset.skip === String(canSkip)) return; old.remove(); }
+    var d = document.createElement('div'); d.id = 'sync-login'; d.dataset.skip = String(canSkip);
+    d.style.cssText = OVERLAY;
     var inp = 'width:100%;box-sizing:border-box;padding:10px;border:1px solid #cbd5e1;border-radius:10px;margin-bottom:8px;font-size:16px';
-    d.innerHTML = '<div style="background:#fff;border-radius:16px;padding:20px;width:100%;max-width:340px;font-family:system-ui,sans-serif">' +
+    d.innerHTML = '<div style="' + CARD + '">' +
       '<h3 style="margin:0 0 4px;font-size:18px">Cloud sync login</h3>' +
       '<p style="margin:0 0 12px;font-size:12px;color:#64748b">Use the same email and password on all your devices.</p>' +
       '<input id="sl-email" type="email" placeholder="Email" autocomplete="username" style="' + inp + '">' +
       '<input id="sl-pass" type="password" placeholder="Password" autocomplete="current-password" style="' + inp + '">' +
       '<p id="sl-err" style="color:#e11d48;font-size:12px;min-height:16px;margin:0 0 8px"></p>' +
       '<button id="sl-go" style="width:100%;padding:11px;border:0;border-radius:10px;background:#0f172a;color:#fff;font-weight:600;font-size:15px">Log in</button>' +
-      '<button id="sl-skip" style="width:100%;padding:9px;border:0;background:none;color:#64748b;font-size:13px;margin-top:6px">Skip – work on this device only</button></div>';
+      (canSkip
+        ? '<button id="sl-skip" style="width:100%;padding:9px;border:0;background:none;color:#64748b;font-size:13px;margin-top:6px">Skip – work on this device only</button>'
+        : '<p style="margin:10px 0 0;font-size:12px;color:#64748b;text-align:center">Internet is needed for the first login.</p>') +
+      '</div>';
     document.body.appendChild(d);
-    document.getElementById('sl-skip').onclick = function () { d.remove(); badge('login'); };
+    if (canSkip) document.getElementById('sl-skip').onclick = function () { d.remove(); badge('login'); };
     document.getElementById('sl-go').onclick = async function () {
       var err = document.getElementById('sl-err'); err.textContent = '';
       try {
@@ -67,6 +77,43 @@
         if (r.error) { err.textContent = r.error.message; return; }
         user = r.data.user; d.remove(); boot();
       } catch (e) { err.textContent = 'Could not connect. Check internet.'; }
+    };
+  }
+
+  /* ---------- log out ---------- */
+  function lock() {                       // this device must log in again (no Skip)
+    user = null; localStorage.removeItem('gn_sync_uid');
+    try { if (chan) sb.removeChannel(chan); } catch (e) {}
+    chan = null;
+    var m = document.getElementById('sync-menu'); if (m) m.remove();
+    badge('login'); askLogin();
+  }
+  async function doLogout(scope) {
+    if (!navigator.onLine) { toast('No internet', 'Internet is needed to log out.'); return; }
+    try {
+      var r = await sb.auth.signOut({ scope: scope });
+      if (r && r.error) { toast('Could not log out', String(r.error.message || r.error)); return; }
+    } catch (e) { toast('Could not log out', 'Please try again.'); return; }
+    lock();
+  }
+  function askMenu() {
+    if (document.getElementById('sync-menu')) return;
+    var d = document.createElement('div'); d.id = 'sync-menu'; d.style.cssText = OVERLAY;
+    var btn = 'width:100%;padding:11px;border:0;border-radius:10px;font-weight:600;font-size:15px;margin-bottom:8px;';
+    d.innerHTML = '<div style="' + CARD + '">' +
+      '<h3 style="margin:0 0 4px;font-size:18px">Cloud sync</h3>' +
+      '<p id="sm-info" style="margin:0 0 12px;font-size:12px;color:#64748b;word-break:break-all"></p>' +
+      '<button id="sm-sync" style="' + btn + 'background:#0f172a;color:#fff">Sync now</button>' +
+      '<button id="sm-out" style="' + btn + 'background:#fee2e2;color:#b91c1c">Log out this device</button>' +
+      '<button id="sm-all" style="' + btn + 'background:#fee2e2;color:#b91c1c">Log out ALL devices</button>' +
+      '<button id="sm-close" style="width:100%;padding:9px;border:0;background:none;color:#64748b;font-size:13px">Close</button></div>';
+    document.body.appendChild(d);
+    document.getElementById('sm-info').textContent = 'Logged in as ' + ((user && user.email) || '');
+    document.getElementById('sm-close').onclick = function () { d.remove(); };
+    document.getElementById('sm-sync').onclick = function () { d.remove(); paused = false; runSync(true); };
+    document.getElementById('sm-out').onclick = function () { doLogout('local'); };
+    document.getElementById('sm-all').onclick = function () {
+      if (confirm('Log out ALL devices that use this account?\n\nEvery phone and computer will need to log in again.')) doLogout('global');
     };
   }
 
@@ -185,7 +232,8 @@
     }).subscribe();
   }
   async function boot() {
-    if (localStorage.getItem('gn_sync_uid') !== user.id) { snap = {}; lastPull = ''; localStorage.setItem('gn_sync_uid', user.id); await saveSnap(); }
+    if (localStorage.getItem('gn_sync_user') !== user.id) { snap = {}; lastPull = ''; localStorage.setItem('gn_sync_user', user.id); await saveSnap(); }
+    localStorage.setItem('gn_sync_uid', user.id);
     listen(); await runSync();
   }
 
@@ -206,7 +254,7 @@
     window.addEventListener('offline', function () { badge('off'); });
     document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') runSync(); });
     setInterval(function () { if (document.visibilityState === 'visible') runSync(); }, 45000);
-    sb.auth.onAuthStateChange(function (ev, s) { if (ev === 'SIGNED_OUT') { user = null; badge('login'); } else if (s && s.user) user = s.user; });
+    sb.auth.onAuthStateChange(function (ev, s) { if (ev === 'SIGNED_OUT') lock(); else if (s && s.user) user = s.user; });
   }
 
   /* ---------- plug into the existing app (no edits needed in index.html) ---------- */
